@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html>
 <head>
 <title>Webview log</title>
@@ -6,6 +6,7 @@
 <script src="./trace.js"></script>
 </head>
 <body>
+<div id="debuglog"></div>
 <input id="mybutton" type="button" value="start"/>
 <input id="mycreate" type="button" value="create"/>
 <script type="text/javascript">
@@ -23,6 +24,8 @@
                     list.forEach(function(value) {
                         appendLog(value);
                     })
+                    // 滚动条滚动到底部
+                    $(window).scrollTop($('#debuglog').height());
                 }
             },
             error: function() {
@@ -46,14 +49,7 @@
         log.appendChild(pre);
     }
 
-    function clearLastInterval () {
-        var i = setInterval (function () {}, 10000);
-        clearInterval (i-1);
-        clearInterval (i);
-    }
-
     $('#mybutton').click(function() {
-        
         if ($('#mybutton').val() == 'stop') {
             $('#mybutton').val('start');
             clearInterval($(this).data('timer'));
