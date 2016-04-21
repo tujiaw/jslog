@@ -1,0 +1,76 @@
+
+<html>
+<head>
+<title>Webview log</title>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+<script src="./trace.js"></script>
+</head>
+<body>
+<input id="mybutton" type="button" value="start"/>
+<input id="mycreate" type="button" value="create"/>
+<script type="text/javascript">
+    function getLog() {
+        $.ajax({
+            type:'GET',
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            timeout: 3000,
+            url: 'http://127.0.0.1:8888/all',
+            success: function(result) {
+                var obj = JSON.parse(result);
+                if (obj.data) {
+                    var list = obj.data.split('^');
+                    list.forEach(function(value) {
+                        appendLog(value);
+                    })
+                }
+            },
+            error: function() {
+                appendLog('error');
+            }
+        })
+    }
+
+    function appendLog(msg) {
+        var log = document.getElementById("debuglog");
+        if (!log) {
+            log = document.createElement("div");
+            log.id = "debuglog";
+            document.body.appendChild(log);
+        }
+        var pre = document.createElement("prev");
+        var text = document.createTextNode(msg);
+        var newLine = document.createElement("br");
+        pre.appendChild(text);
+        pre.appendChild(newLine);
+        log.appendChild(pre);
+    }
+
+    function clearLastInterval () {
+        var i = setInterval (function () {}, 10000);
+        clearInterval (i-1);
+        clearInterval (i);
+    }
+
+    $('#mybutton').click(function() {
+        
+        if ($('#mybutton').val() == 'stop') {
+            $('#mybutton').val('start');
+            clearInterval($(this).data('timer'));
+        } else {
+            $('#mybutton').val('stop');
+            var timer = setInterval(function() {
+                getLog();
+            }, 1000);
+            $(this).data('timer', timer);
+        }
+    })
+
+    $('#mycreate').click(function() {
+        trace();
+    })
+
+    $('#mybutton').click();
+</script>
+</body>
+</html>
